@@ -15,6 +15,15 @@ class GoogleAuthController extends Controller
 {
     public function redirect()
     {
+        // If Google sign-in hasn't been configured yet, don't bounce the user
+        // to Google with an empty client_id (that shows an ugly "Access blocked"
+        // page). Send them back with a clear message and let them use a password.
+        if (! config('services.google.client_id') || ! config('services.google.client_secret')) {
+            return redirect()->route('login')->withErrors([
+                'email' => 'Google sign-in isn\'t set up yet. Please log in with your email and password.',
+            ]);
+        }
+
         return Socialite::driver('google')
             ->scopes(['openid', 'profile', 'email'])
             ->redirect();
