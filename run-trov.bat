@@ -40,6 +40,10 @@ if defined TROVURL (
   echo        !TROVURL!
   echo.
   echo !TROVURL!> "%~dp0run-trov-url.txt"
+  REM copy the link to the clipboard and open it in the default browser
+  <nul set /p "=!TROVURL!" | clip
+  start "" "!TROVURL!"
+  echo    ^(Copied to your clipboard and opened in your browser.^)
 ) else (
   echo    Link not ready yet. Open the minimized "TROV tunnel"
   echo    window, or re-check tools\tunnel.log in a few seconds.
