@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CaptureImageController;
 use App\Http\Controllers\DevotionalPhotoController;
 use App\Http\Controllers\GoogleAuthController;
+use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\Editor\DevotionalController;
 use App\Http\Controllers\Editor\WorkspaceController;
 use App\Http\Controllers\Editor\SummaryController;
@@ -19,6 +20,11 @@ Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'show'])->name('login');
     Route::post('/login', [AuthController::class, 'login'])
         ->middleware('throttle:6,1')->name('login.attempt');
+
+    // Self-service sign-up (pick Owner or Video Editor).
+    Route::get('/register', [RegisterController::class, 'show'])->name('register');
+    Route::post('/register', [RegisterController::class, 'register'])
+        ->middleware('throttle:6,1')->name('register.attempt');
 
     // Sign in with Google.
     Route::get('/auth/google/redirect', [GoogleAuthController::class, 'redirect'])->name('google.redirect');
