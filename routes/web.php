@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CaptureImageController;
 use App\Http\Controllers\DevotionalPhotoController;
+use App\Http\Controllers\GoogleAuthController;
 use App\Http\Controllers\Editor\DevotionalController;
 use App\Http\Controllers\Editor\WorkspaceController;
 use App\Http\Controllers\Editor\SummaryController;
@@ -18,6 +19,10 @@ Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'show'])->name('login');
     Route::post('/login', [AuthController::class, 'login'])
         ->middleware('throttle:6,1')->name('login.attempt');
+
+    // Sign in with Google.
+    Route::get('/auth/google/redirect', [GoogleAuthController::class, 'redirect'])->name('google.redirect');
+    Route::get('/auth/google/callback', [GoogleAuthController::class, 'callback'])->name('google.callback');
 });
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth')->name('logout');
 
