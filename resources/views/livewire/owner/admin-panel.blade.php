@@ -17,7 +17,7 @@
     ];
 @endphp
 
-<section class="screen admin">
+<section class="screen admin" wire:poll.15s>
     <nav class="side" aria-label="Admin sections">
         <p class="cap">Admin &middot; {{ auth()->user()->name }}</p>
         @foreach ($sections as $key => [$icon, $label])
@@ -97,7 +97,7 @@
                             <td><div class="person"><span class="av">{{ $initials($r->name) }}</span><span><span class="nm">{{ $r->name }}</span></span></div></td>
                             <td class="mono">{{ $r->dev?->format('g:i A') ?? '—' }}</td>
                             <td>@if($r->dev)<span class="state s-green"><i></i>Submitted</span>@else<span class="state s-red"><i></i>Missing</span>@endif</td>
-                            <td>@if($r->dev)<span class="thumb" style="width:38px;height:38px">{!! $book !!}</span>@else — @endif</td>
+                            <td>@if($r->dev && $r->devId)<a class="thumb" href="{{ route('devotional.photo', $r->devId) }}" target="_blank" title="View full photo" style="display:block;width:56px;height:56px"><img src="{{ route('devotional.photo', $r->devId) }}" alt="Devotional photo" loading="lazy" style="width:100%;height:100%;object-fit:cover"></a>@else — @endif</td>
                             <td>@if($r->dev)<span class="tiny">recorded {{ $r->dev->format('g:i A') }}</span>@else<span class="tiny">Workspace locked</span>@endif</td>
                         </tr>
                     @endforeach
@@ -138,7 +138,7 @@
                         <tr>
                             <td><div class="person"><span class="av">{{ $initials($r->name) }}</span><span><span class="nm">{{ $r->name }}</span></span></div></td>
                             <td>{!! $pill($r->status) !!}</td>
-                            <td class="mono">{{ $r->total ? $hm($r->total) : '—' }}</td>
+                            <td class="mono">@if($r->status === 'active' && $r->tin)<span wire:ignore x-data="{t:{{ $r->tin->timestamp }},n:Math.floor(Date.now()/1000)}" x-init="setInterval(()=>n=Math.floor(Date.now()/1000),1000)" x-text="(()=>{let d=Math.max(0,n-t),h=Math.floor(d/3600),m=Math.floor(d%3600/60),s=d%60;return String(h).padStart(2,'0')+'h '+String(m).padStart(2,'0')+'m '+String(s).padStart(2,'0')+'s';})()">0h 00m 00s</span>@elseif($r->total){{ $hm($r->total) }}@else — @endif</td>
                             <td class="mono">{{ $r->total ? $hm($r->active) : '—' }}</td>
                             <td class="mono">{{ $r->total ? $hm($r->idle) : '—' }}</td>
                             <td class="num"><span class="mini {{ $lvl < 80 ? 'warn' : '' }}"><span style="width:{{ $lvl }}%"></span></span>{{ $r->total ? $lvl . '%' : '—' }}</td>

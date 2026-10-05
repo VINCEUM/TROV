@@ -53,6 +53,7 @@ class AdminPanel extends Component
                 'name'     => $e->name,
                 'email'    => $e->email,
                 'dev'      => $dev?->submitted_at,
+                'devId'    => $dev?->devotional_id,
                 'tin'      => $tin,
                 'tout'     => $tout,
                 'status'   => $status,
