@@ -63,14 +63,35 @@ document.addEventListener('alpine:init', () => {
         work: cfg.workBase,
         brk: cfg.breakBase,
         _timer: null,
+        // Livewire re-renders (the 30s heartbeat, Working/Break) can re-create
+        // this Alpine component and snap the counters back to the server values,
+        // which lag up to 30s behind. We keep the live values in a JS global that
+        // survives those re-renders, and never let the display go backwards, so
+        // the timer ticks smoothly instead of resetting.
+        boot() {
+            const c = window.__trovTimer;
+            if (c && c.sid === cfg.sid) {
+                this.work    = Math.max(cfg.workBase, c.work);
+                this.brk     = Math.max(cfg.breakBase, c.brk);
+                this.working = c.working;
+            }
+            this._save();
+            this.start();
+        },
         start() {
+            if (this._timer) clearInterval(this._timer); // never stack intervals
             this._timer = setInterval(() => {
                 if (this.working) { this.work++; } else { this.brk++; }
+                this._save();
             }, 1000);
+        },
+        _save() {
+            window.__trovTimer = { sid: cfg.sid, work: this.work, brk: this.brk, working: this.working };
         },
         destroy() { if (this._timer) clearInterval(this._timer); },
         setWorking(w) {
             this.working = w;
+            this._save();
             if (this.$wire) { this.$wire.setWorking(w); }
         },
         get total() { return this.work + this.brk; },

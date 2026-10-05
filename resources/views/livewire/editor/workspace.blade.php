@@ -19,7 +19,7 @@
 
     {{-- ---- session card + stats (shared work/break timer) ------------ --}}
     <div style="display:contents"
-        @if ($session) wire:ignore x-data="sessionCard({ workBase: {{ $activeSec }}, breakBase: {{ $idleSec }}, working: {{ $working ? 'true' : 'false' }} })" x-init="start()" @endif>
+        @if ($session) wire:ignore x-data="sessionCard({ sid: {{ $session->clock_in_at->timestamp }}, workBase: {{ $activeSec }}, breakBase: {{ $idleSec }}, working: {{ $working ? 'true' : 'false' }} })" x-init="boot()" @endif>
 
         <div class="session">
             @if ($session)
